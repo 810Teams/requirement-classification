@@ -3,8 +3,9 @@
     https://www.thainlp.org/pythainlp/tutorials/notebooks/pythainlp-get-started.html
 '''
 
-from pythainlp import word_tokenize
+from pythainlp.corpus.common import thai_words
 from pythainlp.tag import pos_tag
+from pythainlp import word_tokenize, Tokenizer
 
 
 class Keyword():
@@ -16,6 +17,9 @@ class Keyword():
         self.word = word     # Type: String
         self.weight = weight # Type: Integer
 
+WORDS = set(thai_words())
+_ = [WORDS.add(i.replace('\n', '').strip()) for i in open('requirement/data/custom_tokenizer.txt')]
+TOKENIZER = Tokenizer(WORDS)
 
 KEYWORDS_HIGH_PRIORITY = [
     Keyword('เด็ดขาด', 2),
@@ -180,17 +184,36 @@ def get_data_group_by_functionality(data):
 
 
 def get_data_group_by_keyword(data):
+    dict_keywords = dict()
+
     all_data = list()
+    counted_data = dict()
 
+    # Step 1: Append all received data
     for i in data:
-        all_data.append(pos_tag(word_tokenize(i)))
+        all_data.append(pos_tag(TOKENIZER.word_tokenize(i)))
 
+    # Step 2: Count and clean other word types than NCMN (Probably nouns)
     for i in all_data:
         for j in i:
             if j[1] == 'NCMN':
-                print(j)
+                if j not in counted_data:
+                    counted_data[j] = 1
+                else:
+                    counted_data[j] += 1
 
-    return
+    # Step 3: Remove exceeded keywords
+    while len(counted_data) > 9:
+        minimum = 2
+        for i in sorted(counted_data, key=lambda x: counted_data[x]):
+            if counted_data[i] < minimum:
+                counted_data.pop(i)
+        minimum += 1
+
+    for i in counted_data:
+        dict_keywords[i[0]] = [j for j in data if i[0] in TOKENIZER.word_tokenize(j)]
+
+    return dict_keywords
 
 
 def calculate_score(data, source):
@@ -198,8 +221,8 @@ def calculate_score(data, source):
 
     for j in source:
         check = True
-        for k in word_tokenize(j.word, keep_whitespace=False):
-            if k not in word_tokenize(data, keep_whitespace=False):
+        for k in TOKENIZER.word_tokenize(j.word):
+            if k not in TOKENIZER.word_tokenize(data):
                 check = False
                 break
         score += j.weight * check

@@ -28,12 +28,12 @@ class RequirementData():
         return RequirementPriorityGroup(response[0], response[1], response[2])
 
     def analyze_functionality(self, requirements):
-        # TODO: Implements method
-        pass
+        response = get_data_group_by_functionality([i.description for i in self.requirements])
+        return RequirementFunctionalityGroup(response[0], response[1])
 
     def analyze_keyword(self, requirements):
-        # TODO: Implements method
-        pass
+        response = get_data_group_by_keyword([i.description for i in self.requirements])
+        return [RequirementKeywordGroup(i, response[i]) for i in response]
 
 class Requirement():
     '''
