@@ -1,6 +1,5 @@
 from django.shortcuts import render
 
-from requirement.analyze import analyze
 from requirement.entities import RequirementData
 
 
@@ -12,6 +11,6 @@ def index(request):
         title = request.POST.get('title')
         requirements = request.POST.get('requirements')
 
-        context['data'] = analyze(RequirementData(title, requirements))
+        context['data'] = RequirementData(title, requirements)
 
     return render(request, template_name='requirement/index.html', context=context)
