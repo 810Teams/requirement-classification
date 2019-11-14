@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from requirement.entities import RequirementData
+from requirement.analysis import RequirementData
 
 
 def index(request):

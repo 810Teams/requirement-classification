@@ -4,6 +4,8 @@ from pythainlp.corpus.common import thai_words
 from pythainlp.tag import pos_tag
 from pythainlp import Tokenizer
 
+from pandas import read_csv
+from numpy import array
 
 class RequirementData():
     '''
@@ -94,72 +96,30 @@ class Keyword():
         self.word = word     # Type: String
         self.weight = weight # Type: Integer
 
-WORDS = set(thai_words())
-_ = [WORDS.add(i.replace('\n', '').strip()) for i in open('requirement/data/custom_tokenizer.txt')]
-TOKENIZER = Tokenizer(WORDS)
+THAI_WORDS = set(thai_words())
+for i in open('requirement/data/custom_tokenizer.txt'):
+    THAI_WORDS.add(i.replace('\n', '').strip())
+
+TOKENIZER = Tokenizer(THAI_WORDS)
 
 KEYWORDS_HIGH_PRIORITY = [
-    Keyword('เด็ดขาด', 2),
-    Keyword('ต้อง', 2),
-    Keyword('จำเป็น', 2),
-    Keyword('ห้าม', 2),
-    Keyword('ไม่มีไม่ได้', 2),
+    Keyword(i[0], int(i[1])) for i in array(read_csv('requirement/data/keywords/priority-high.csv')).tolist()
 ]
 
 KEYWORDS_MEDIUM_PRIORITY = [
-    Keyword('อยาก', 2),
-    Keyword('ควร', 2),
-    Keyword('น่าจะ', 2),
-    Keyword('เอา', 2),
-    Keyword('ได้', 1),
+    Keyword(i[0], int(i[1])) for i in array(read_csv('requirement/data/keywords/priority-medium.csv')).tolist()
 ]
 
 KEYWORDS_LOW_PRIORITY = [
-    Keyword('แต่ไม่', 2),
-    Keyword('ถึงแม้', 2),
-    Keyword('ถึงไม่', 2),
-    Keyword('ไม่เป็นไร', 2),
-    Keyword('ไม่เป็นอะไร', 2),
-    Keyword('อะไรก็ได้', 2),
-    Keyword('ชอบ', 2),
-    Keyword('ก็ได้', 1),
-    Keyword('ก็ดี', 1),
-    Keyword('สี', 1),
-    Keyword('รูป', 1),
-    Keyword('ลาย', 1),
-    Keyword('สวย', 1),
+    Keyword(i[0], int(i[1])) for i in array(read_csv('requirement/data/keywords/priority-low.csv')).tolist()
 ]
 
 KEYWORDS_FUNCTIONAL = [
-    Keyword('เพิ่ม', 2),
-    Keyword('ลด', 2),
-    Keyword('บวก', 2),
-    Keyword('ลบ', 2),
-    Keyword('ดู', 2),
-    Keyword('เปิิด', 2),
-    Keyword('ปิด', 2),
-    Keyword('เข้า', 2),
-    Keyword('ล็อก', 2),
-    Keyword('วิเคราะห์', 2),
-    Keyword('เลื่อน', 2),
-    Keyword('สามารถ', 2),
-    Keyword('คำนวณ', 2),
-    Keyword('ทำ', 2),
-    Keyword('โหลด', 2),
-    Keyword('ใส่', 2),
-    Keyword('รายการ', 2),
-    Keyword('ฟีเจอร์', 2),
-    Keyword('ฟังก์ชัน', 2),
+    Keyword(i[0], int(i[1])) for i in array(read_csv('requirement/data/keywords/functional.csv')).tolist()
 ]
 
 KEYWORDS_NON_FUNCTIONAL = [
-    Keyword('รูป', 3),
-    Keyword('ภาพ', 3),
-    Keyword('สี', 3),
-    Keyword('ลาย', 3),
-    Keyword('ฟอนต์', 3),
-    Keyword('ตัวหนังสือ', 3),
-    Keyword('ตกแต่ง', 2),
+    Keyword(i[0], int(i[1])) for i in array(read_csv('requirement/data/keywords/non-functional.csv')).tolist()
 ]
 
 
