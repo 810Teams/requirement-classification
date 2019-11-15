@@ -23,19 +23,39 @@ class RequirementData():
         self.requirements = requirements                     # Type: List<Requirement>
         self.by_priority = self.analyze_priority()           # Type: RequirementPriorityGroup
         self.by_functionality = self.analyze_functionality() # Type: RequirementFunctionalityGroup
-        self.by_keyword = self.analyze_keyword()             # Type: RequirementKeywordGroup
+        self.by_keywords = self.analyze_keywords()             # Type: RequirementKeywordGroup
 
     def analyze_priority(self):
         response = get_data_group_by_priority(self.requirements)
+
+        for i in response[0]:
+            i.priority = 2
+        for i in response[1]:
+            i.priority = 1
+        for i in response[2]:
+            i.priority = 0
+
         return RequirementPriorityGroup(response[0], response[1], response[2])
 
     def analyze_functionality(self):
         response = get_data_group_by_functionality(self.requirements)
+
+        for i in range(len(response)):
+            for j in response[i]:
+                j.functionality = not bool(i)
+
         return RequirementFunctionalityGroup(response[0], response[1])
 
-    def analyze_keyword(self):
+    def analyze_keywords(self):
         response = get_data_group_by_keyword(self.requirements)
+
+        for i in response:
+            if i != 'อื่น ๆ':
+                for j in response[i]:
+                    j.keywords.append(i)
+
         return [RequirementKeywordGroup(i, response[i]) for i in response]
+
 
 class Requirement():
     '''
@@ -45,19 +65,10 @@ class Requirement():
     def __init__(self, id, description):
         self.id = id                   # Type: Integer
         self.description = description # Type: String
-        self.rating = None             # Type: Integer
+        self.priority = None           # Type: Integer
+        self.is_functional = None      # Type: Boolean
+        self.keywords = list()         # Type: List
 
-    def set_rating(self, rating):
-        self.rating = floor(min(max(0, rating), 10))
-
-class RequirementRelatedGroup():
-    '''
-        Class: RequirementRelatedGroup
-        Purpose: Contains main requirement and its related ones
-    '''
-    def __init__(self, main, chained):
-        self.main = main       # Type: Requirement
-        self.chained = chained # Type: List<Requirement>
 
 class RequirementPriorityGroup():
     '''
@@ -69,6 +80,7 @@ class RequirementPriorityGroup():
         self.medium = medium # Type: List<Requirement>
         self.low = low       # Type: List<Requirement>
 
+
 class RequirementFunctionalityGroup():
     '''
         Class: RequirementFunctionalityGroup
@@ -77,6 +89,7 @@ class RequirementFunctionalityGroup():
     def __init__(self, functional, non_functional):
         self.functional = functional         # Type: List<Requirement>
         self.non_functional = non_functional # Type: List<Requirement>
+
 
 class RequirementKeywordGroup():
     '''
@@ -87,6 +100,7 @@ class RequirementKeywordGroup():
         self.keyword = keyword           # Type: String
         self.requirements = requirements # Type: List<Requirement>
 
+
 class Keyword():
     '''
         Class: Keyword
@@ -95,6 +109,7 @@ class Keyword():
     def __init__(self, word, weight):
         self.word = word     # Type: String
         self.weight = weight # Type: Integer
+
 
 THAI_WORDS = set(thai_words())
 for i in open('requirement/data/custom_tokenizer.txt'):
@@ -200,7 +215,7 @@ def get_data_group_by_keyword(data):
 
     # Step 3: Remove exceeded keywords
     minimum = 2
-    while len(counted_data) > 15:
+    while len(counted_data) > 30:
         for i in sorted(counted_data, key=lambda x: counted_data[x]):
             if counted_data[i] < minimum:
                 counted_data.pop(i)
