@@ -1,5 +1,3 @@
-from math import floor
-
 from pythainlp.corpus.common import thai_words
 from pythainlp.tag import pos_tag
 from pythainlp import Tokenizer
@@ -23,11 +21,12 @@ class RequirementData():
         self.requirements = requirements                     # Type: List<Requirement>
         self.by_priority = self.analyze_priority()           # Type: RequirementPriorityGroup
         self.by_functionality = self.analyze_functionality() # Type: RequirementFunctionalityGroup
-        self.by_keywords = self.analyze_keywords()             # Type: RequirementKeywordGroup
+        self.by_keywords = self.analyze_keywords()           # Type: RequirementKeywordGroup
 
     def analyze_priority(self):
         response = get_data_group_by_priority(self.requirements)
 
+        # Assign values to Requirement objects
         for i in response[0]:
             i.priority = 2
         for i in response[1]:
@@ -40,6 +39,7 @@ class RequirementData():
     def analyze_functionality(self):
         response = get_data_group_by_functionality(self.requirements)
 
+        # Assign values to Requirement objects
         for i in range(len(response)):
             for j in response[i]:
                 j.functionality = not bool(i)
@@ -49,6 +49,7 @@ class RequirementData():
     def analyze_keywords(self):
         response = get_data_group_by_keyword(self.requirements)
 
+        # Assign values to Requirement objects
         for i in response:
             if i != 'อื่น ๆ':
                 for j in response[i]:
