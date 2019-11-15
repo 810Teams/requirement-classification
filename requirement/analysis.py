@@ -215,7 +215,7 @@ def get_data_group_by_keyword(data):
 
     # Step 3: Remove exceeded keywords
     minimum = 2
-    while len(counted_data) > 30:
+    while len(counted_data) > 14:
         for i in sorted(counted_data, key=lambda x: counted_data[x]):
             if counted_data[i] < minimum:
                 counted_data.pop(i)
