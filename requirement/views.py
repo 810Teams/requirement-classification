@@ -11,7 +11,11 @@ def index(request):
     if request.method == 'POST':
         form = RequirementForm(request.POST)
         if form.is_valid():
-            context['data'] = RequirementData(form.title, form.requirements)
+            context['data'] = RequirementData(
+                form.cleaned_data.get('title'),
+                form.cleaned_data.get('requirements')
+            )
+            context['success'] = "Analysis successful!"
         else:
             context['error'] = form.error
 
