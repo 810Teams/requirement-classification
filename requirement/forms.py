@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 
 class RequirementForm(forms.Form):
     title = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class' : 'form-control'}))
-    requirements = forms.CharField(max_length=4096, required=True, widget=forms.Textarea(attrs={'class' : 'form-control'}))
+    requirements = forms.CharField(required=True, widget=forms.Textarea(attrs={'class' : 'form-control'}))
 
     error = None
 
