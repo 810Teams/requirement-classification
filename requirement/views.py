@@ -18,6 +18,9 @@ def index(request):
             context['success'] = "Analysis successful!"
         else:
             context['error'] = form.error
+        context['form'] = form
+    else:
+        context['form'] = RequirementForm()
 
     # context['data'] = RequirementData('แอปยา', [
     #     'แอปต้องดูรายการยาได้',
