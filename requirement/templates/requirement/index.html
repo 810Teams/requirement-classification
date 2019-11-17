@@ -9,33 +9,47 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Requirement Classification</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
   </head>
   <body>
     <div>
-      <form class="container jumbotron narrow"
+      <form
             method="POST"
             action="{% url 'index' %}">
         {% csrf_token %}
+        <div class="form-group container card">
+
+        <h1>Requirement Classification</h1>
+          <br>
 
         <div class="form-group">
-          {{ form.title.label }}
+          <label for="title">
+              {{ form.title.label }}
+          </label>
           {{ form.title }}
         </div>
         <div class="form-group">
-          {{ form.requirements.label }}
+          <label for="requirements">
+              {{ form.requirements.label }}
+          </label>
           {{ form.requirements }}
         </div>
 
         <div class="center group">
-          <input class="btn btn-success" type="submit" value="Submit" />
+          <input class="btn btn-primary" type="submit" value="Submit" />
+          <input type="button" class="btn btn-outline-danger" onclick="clear()" value="clear"/>
         </div>
+      </div>
+
       </form>
-
+      <div class="container">
         {% if data %}
-
+          <div class="card">
             <h3>All Requirements</h3>
+            <ul class="list-group list-group-flush">
             {% for i in data.requirements %}
+            <li class="list-group-item">
                 ID: {{ i.id }}
                 | Priority: {{ i.priority }}
                 | Functionality: {{ i.functionality }}
@@ -45,43 +59,80 @@
                 {% endfor %}
 
                 | {{ i.description }}<br>
+              </li>
             {% endfor %}
+            </ul>
+          </div>
+          <div class="row">
+              <div class="col">
+                  <div class="card col-md-12">
+                    <h3>High Priority</h3>
+                    {% for i in data.by_priority.high %}
+                        {{ i.id }} - {{ i.description }}<br>
+                    {% endfor %}
+                  </div>
+              </div>
 
-            <h3>High Priority</h3>
-            {% for i in data.by_priority.high %}
-                {{ i.id }} - {{ i.description }}<br>
-            {% endfor %}
+              <div class="col">
+                  <div class="card col-md-12">
+                    <h3>Medium Priority</h3>
+                    {% for i in data.by_priority.medium %}
+                        {{ i.id }} - {{ i.description }}<br>
+                    {% endfor %}
+                  </div>
+              </div>
 
-            <h3>Medium Priority</h3>
-            {% for i in data.by_priority.medium %}
-                {{ i.id }} - {{ i.description }}<br>
-            {% endfor %}
-
-            <h3>Low Priority</h3>
-            {% for i in data.by_priority.low %}
-                {{ i.id }} - {{ i.description }}<br>
-            {% endfor %}
-
-            <h3>Functional</h3>
-            {% for i in data.by_functionality.functional %}
-                {{ i.id }} - {{ i.description }}<br>
-            {% endfor %}
-
-            <h3>Non-Functional</h3>
-            {% for i in data.by_functionality.non_functional %}
-                {{ i.id }} - {{ i.description }}<br>
-            {% endfor %}
-
-            <h3>Keywords</h3>
-            {% for i in data.by_keywords %}
-                <h4>{{ i.keyword }}</h4>
-                {% for j in i.requirements %}
-                    {{ j.id }} - {{ j.description }}<br>
+              <div class="col">
+                  <div class="card col-md-12">
+                    <h3>Low Priority</h3>
+                    {% for i in data.by_priority.low %}
+                        {{ i.id }} - {{ i.description }}<br>
+                    {% endfor %}
+                  </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="card col">
+              <div class="col-md-12">
+                <h3>Functional</h3>
+                {% for i in data.by_functionality.functional %}
+                    {{ i.id }} - {{ i.description }}<br>
                 {% endfor %}
-            {% endfor %}
-
+              </div>
+            </div>
+            <div class="col">
+              <div class="card col-md-12">
+                <h3>Non-Functional</h3>
+                {% for i in data.by_functionality.non_functional %}
+                    {{ i.id }} - {{ i.description }}<br>
+                {% endfor %}
+                </div>
+            </div>
+          </div>
+          <div class="col">
+              <div class="card col-md-12">
+                <h3>Keywords</h3>
+                {% for i in data.by_keywords %}
+                    <h4>{{ i.keyword }}</h4>
+                    {% for j in i.requirements %}
+                        {{ j.id }} - {{ j.description }}<br>
+                    {% endfor %}
+                {% endfor %}
+              </div>
+          </div>
         {% endif %}
     </div>
+
+
+
+</div>
+
+  <script>
+    function clear(){
+      confirm("are you sure?")
+      document.querySelector("#id_requirements").value = ""
+    }
+  </script>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

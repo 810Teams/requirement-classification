@@ -113,7 +113,7 @@ class Keyword():
 
 
 THAI_WORDS = set(thai_words())
-for i in open('requirement/data/custom_tokenizer.txt'):
+for i in open('requirement/data/custom_tokenizer.txt', encoding="utf-8"):
     THAI_WORDS.add(i.replace('\n', '').strip())
 
 TOKENIZER = Tokenizer(THAI_WORDS)

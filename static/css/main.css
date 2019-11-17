@@ -3,3 +3,8 @@
  */
 
 /* Custom CSS code here! */
+.card{
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 2em;
+}
