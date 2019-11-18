@@ -8,3 +8,6 @@
     margin-bottom: 1em;
     padding: 2em;
 }
+.container{
+    padding: 0 !important;
+}

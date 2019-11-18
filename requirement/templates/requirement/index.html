@@ -64,7 +64,7 @@
             </ul>
           </div>
           <div class="row">
-              <div class="col">
+              <div class="col d-flex align-items-stretch">
                   <div class="card col-md-12">
                     <h3>High Priority</h3>
                     {% for i in data.by_priority.high %}
@@ -73,7 +73,7 @@
                   </div>
               </div>
 
-              <div class="col">
+              <div class="col d-flex align-items-stretch">
                   <div class="card col-md-12">
                     <h3>Medium Priority</h3>
                     {% for i in data.by_priority.medium %}
@@ -82,7 +82,7 @@
                   </div>
               </div>
 
-              <div class="col">
+              <div class="col d-flex align-items-stretch">
                   <div class="card col-md-12">
                     <h3>Low Priority</h3>
                     {% for i in data.by_priority.low %}
@@ -92,7 +92,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="card col">
+            <div class="card col d-flex align-items-stretch">
               <div class="col-md-12">
                 <h3>Functional</h3>
                 {% for i in data.by_functionality.functional %}
@@ -100,7 +100,7 @@
                 {% endfor %}
               </div>
             </div>
-            <div class="col">
+            <div class="col d-flex align-items-stretch">
               <div class="card col-md-12">
                 <h3>Non-Functional</h3>
                 {% for i in data.by_functionality.non_functional %}
@@ -109,7 +109,7 @@
                 </div>
             </div>
           </div>
-          <div class="col">
+          <div class="col d-flex align-items-stretch">
               <div class="card col-md-12">
                 <h3>Keywords</h3>
                 {% for i in data.by_keywords %}
