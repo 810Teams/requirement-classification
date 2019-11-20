@@ -10,6 +10,9 @@ from pythainlp import Tokenizer
 from pandas import read_csv
 from numpy import array
 
+from requirement.models import AnalyzedRequirement
+
+
 class RequirementData():
     '''
         Class: RequirementData
@@ -47,7 +50,7 @@ class RequirementData():
         # Assign values to Requirement objects
         for i in range(len(response)):
             for j in response[i]:
-                j.functionality = not bool(i)
+                j.is_functional = not bool(i)
 
         return RequirementFunctionalityGroup(response[0], response[1])
 
@@ -115,6 +118,18 @@ class Keyword():
     def __init__(self, word, weight):
         self.word = word     # Type: String
         self.weight = weight # Type: Integer
+
+
+class Tree():
+    def __init__(self, name, root):
+        self.name = name # Type: String
+        self.root = root # Type: TreeNode
+
+
+class TreeNode():
+    def __init__(self, data):
+        self.data = data       # Type: <Dynamic>
+        self.children = list() # Type: List<Dynamic>
 
 
 THAI_WORDS = set(thai_words())
@@ -251,3 +266,49 @@ def calculate_score(data, source):
         score += i.weight * check
 
     return score
+
+
+def create_tree(priority=None, is_functional=None):
+    if priority != None and is_functional == None:
+        items = [i.get_pos_tag_refined() for i in AnalyzedRequirement.objects.filter(priority=priority)]
+    elif priority == None and is_functional != None:
+        items = [i.get_pos_tag_refined() for i in AnalyzedRequirement.objects.filter(is_functional=is_functional)]
+    else:
+        return
+
+    root = TreeNode(None)
+
+    for i in items:
+        if len(i) != 0:
+            dive_tree(node=root, item=i, level=0)
+
+    dive_tree_print(root, 0)
+
+
+def dive_tree(node=TreeNode(None), item=[], level=0):
+    if item[level] not in [i.data for i in node.children]:
+        node.children.append(TreeNode(item[level]))
+
+    if level + 1 < len(item):
+        dive_tree(node=node.children[[i.data for i in node.children].index(item[level])], item=item, level=level + 1)
+
+
+def dive_tree_print(node, level):
+    print('{}{}'.format('    '*(level - 1), node.data))
+
+    for i in node.children:
+        dive_tree_print(i, level + 1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
