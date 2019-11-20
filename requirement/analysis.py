@@ -202,8 +202,6 @@ def get_data_group_by_keyword(data):
 
     exceptions = [
         'นะ',
-        'แอป',
-        'แอปพลิเคชัน'
     ]
 
     # Step 1: Append all received data
