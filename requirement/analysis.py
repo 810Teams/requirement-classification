@@ -1,3 +1,8 @@
+'''
+    analysis.py
+    https://www.thainlp.org/pythainlp/tutorials/notebooks/pythainlp-get-started.html
+'''
+
 from pythainlp.corpus.common import thai_words
 from pythainlp.tag import pos_tag
 from pythainlp import Tokenizer
