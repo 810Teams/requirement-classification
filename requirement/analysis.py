@@ -120,12 +120,6 @@ class Keyword():
         self.weight = weight # Type: Integer
 
 
-class Tree():
-    def __init__(self, name, root):
-        self.name = name # Type: String
-        self.root = root # Type: TreeNode
-
-
 class TreeNode():
     def __init__(self, data):
         self.data = data       # Type: <Dynamic>
@@ -159,7 +153,7 @@ KEYWORDS_NON_FUNCTIONAL = [
 ]
 
 
-def get_data_group_by_priority(data):
+def get_data_group_by_priority(data, remove_list=('NCMN', 'RPRE', 'VACT', 'VATT', 'VSTA')):
     list_high = list()
     list_medium = list()
     list_low = list()
@@ -167,9 +161,11 @@ def get_data_group_by_priority(data):
     for i in data:
         score = [0, 0, 0]
 
-        score[0] = calculate_score(i, KEYWORDS_HIGH_PRIORITY)
-        score[1] = calculate_score(i, KEYWORDS_MEDIUM_PRIORITY)
-        score[2] = calculate_score(i, KEYWORDS_LOW_PRIORITY)
+        score[0] = calculate_score_sample(i, priority=0, remove_list=remove_list)
+        score[1] = calculate_score_sample(i, priority=1, remove_list=remove_list)
+        score[2] = calculate_score_sample(i, priority=2, remove_list=remove_list)
+
+        # print(i.description, score)
 
         try:
             result = round((score[0] * 0 + score[1] * 1 + score[2] * 2)/sum(score))
@@ -177,24 +173,24 @@ def get_data_group_by_priority(data):
             result = 1
 
         if result == 0:
-            list_high.append(i)
+            list_low.append(i)
         elif result == 1:
             list_medium.append(i)
         elif result == 2:
-            list_low.append(i)
+            list_high.append(i)
 
     return list_high, list_medium, list_low
 
 
-def get_data_group_by_functionality(data):
+def get_data_group_by_functionality(data, remove_list=('NCMN',)):
     list_functional = list()
     list_non_functional = list()
 
     for i in data:
         score = [0, 0]
 
-        score[0] = calculate_score(i, KEYWORDS_FUNCTIONAL)
-        score[1] = calculate_score(i, KEYWORDS_NON_FUNCTIONAL)
+        score[0] = calculate_score_sample(i, is_functional=False, remove_list=remove_list)
+        score[1] = calculate_score_sample(i, is_functional=True, remove_list=remove_list)
 
         try:
             result = round((score[0] * 2 + score[1] * 1)/sum(score))
@@ -254,7 +250,7 @@ def get_data_group_by_keyword(data):
     return dict_keywords
 
 
-def calculate_score(data, source):
+def calculate_score_keywords(data, source):
     score = 0
 
     for i in source:
@@ -268,47 +264,72 @@ def calculate_score(data, source):
     return score
 
 
-def create_tree(priority=None, is_functional=None):
+def calculate_score_sample(data, priority=None, is_functional=None, remove_list=('NCMN',)):
+    return dive_tree_compare(
+        create_tree(
+            priority=priority,
+            is_functional=is_functional,
+            remove_list=remove_list,
+            show_result=False
+        ),
+        pos_tag_refined(
+            TOKENIZER.word_tokenize(data.description),
+            remove_list=remove_list
+        )
+    )
+
+
+def pos_tag_refined(words, remove_list=('NCMN',)):
+    return [i for i in pos_tag(words) if i[1] not in remove_list and i[0] != ' ']
+
+
+def create_tree(priority=None, is_functional=None, remove_list=('NCMN',), show_result=False, result_title=None):
     if priority != None and is_functional == None:
-        items = [i.get_pos_tag_refined() for i in AnalyzedRequirement.objects.filter(priority=priority)]
+        items = [i.get_pos_tag_refined(remove_list=remove_list) for i in AnalyzedRequirement.objects.filter(priority=priority)]
     elif priority == None and is_functional != None:
-        items = [i.get_pos_tag_refined() for i in AnalyzedRequirement.objects.filter(is_functional=is_functional)]
+        items = [i.get_pos_tag_refined(remove_list=remove_list) for i in AnalyzedRequirement.objects.filter(is_functional=is_functional)]
     else:
         return
 
-    root = TreeNode(None)
+    root = TreeNode(result_title)
 
     for i in items:
         if len(i) != 0:
-            dive_tree(node=root, item=i, level=0)
+            dive_tree_append(node=root, item=i, level=0)
 
-    dive_tree_print(root, 0)
+    if show_result:
+        dive_tree_print(root, 0)
+
+    return root
 
 
-def dive_tree(node=TreeNode(None), item=[], level=0):
+def dive_tree_append(node=TreeNode(None), item=(), level=0):
     if item[level] not in [i.data for i in node.children]:
         node.children.append(TreeNode(item[level]))
 
     if level + 1 < len(item):
-        dive_tree(node=node.children[[i.data for i in node.children].index(item[level])], item=item, level=level + 1)
+        dive_tree_append(
+            node=node.children[[i.data for i in node.children].index(item[level])],
+            item=item,
+            level=level + 1
+        )
 
 
 def dive_tree_print(node, level):
-    print('{}{}'.format('    '*(level - 1), node.data))
+    print('{}{}'.format('    '*(level), node.data))
 
     for i in node.children:
         dive_tree_print(i, level + 1)
 
 
+def dive_tree_compare(node=TreeNode(None), item=(), level=0):
+    if len(item) == 0:
+        return 0
 
-
-
-
-
-
-
-
-
-
-
-
+    if item[level] in [i.data for i in node.children] and level + 1 < len(item):
+        return dive_tree_compare(
+            node=node.children[[i.data for i in node.children].index(item[level])],
+            item=item,
+            level=level + 1
+        ) + 1
+    return 0

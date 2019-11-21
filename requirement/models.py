@@ -35,6 +35,5 @@ class AnalyzedRequirement(models.Model):
     def get_pos_tag(self):
         return pos_tag(self.get_words())
 
-    def get_pos_tag_refined(self):
-        refine_query = ['NCMN', 'RPRE', 'VACT', 'VATT', 'VSTA']
-        return [i for i in self.get_pos_tag() if i[1] not in refine_query and i[0] != ' ']
+    def get_pos_tag_refined(self, remove_list=('NCMN', 'RPRE', 'VACT', 'VATT', 'VSTA')):
+        return [i for i in self.get_pos_tag() if i[1] not in remove_list and i[0] != ' ']
