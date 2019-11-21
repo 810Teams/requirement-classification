@@ -8,48 +8,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Requirement Classification</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+            
   </head>
   <body>
     <div>
-      <form
+      <div class="container">
+        <div class="card">
+          <form
             method="POST"
-            action="{% url 'index' %}">
+            action="{% url 'index' %}"
+            class="col s12">
         {% csrf_token %}
-        <div class="form-group container card">
 
-        <h1>Requirement Classification</h1>
-          <br>
+          <h1>Requirement Classification</h1>
+          <div class="row">
+            <div class="input-field col s12">
+              <label for="title">
+                  {{ form.title.label }}
+              </label>
+              {{ form.title }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <label for="requirements">
+                  {{ form.requirements.label }}
+              </label>
+                {{ form.requirements }}
+            </div>
+          </div>
 
-        <div class="form-group">
-          <label for="title">
-              {{ form.title.label }}
-          </label>
-          {{ form.title }}
-        </div>
-        <div class="form-group">
-          <label for="requirements">
-              {{ form.requirements.label }}
-          </label>
-          {{ form.requirements }}
-        </div>
-
-        <div class="center group">
-          <input class="btn btn-primary" type="submit" value="Submit" />
-          <input type="button" class="btn btn-outline-danger" onclick="clear()" value="clear"/>
-        </div>
-      </div>
-
+          <div class="center group">
+            <input class="btn indigo" type="submit" value="Submit"/>
+            <button type="button" class="waves-effect waves-teal btn red" onclick="document.querySelector('#id_requirements').value = ''">clear</button>
+          </div>
       </form>
+    </div>
+  </div>
       <div class="container">
         {% if data %}
           <div class="card">
             <h3>All Requirements</h3>
-            <ul class="list-group list-group-flush">
+            <ul class="collection">
             {% for i in data.requirements %}
-            <li class="list-group-item">
+            <li class="collection-item">
                 ID: {{ i.id }}
                 | Priority: {{ i.priority }}
                 | Functionality: {{ i.functionality }}
@@ -57,8 +65,8 @@
                 {% for j in i.keywords %}
                     {{ j }}
                 {% endfor %}
-
-                | {{ i.description }}<br>
+                 <br>
+                Requiment | "{{ i.description }}"<br>
               </li>
             {% endfor %}
             </ul>
@@ -128,10 +136,6 @@
 </div>
 
   <script>
-    function clear(){
-      confirm("are you sure?")
-      document.querySelector("#id_requirements").value = ""
-    }
   </script>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
