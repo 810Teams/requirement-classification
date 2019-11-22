@@ -3,144 +3,265 @@
 {% load static %}
 
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Requirement Classification</title>
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Requirement Classification</title>
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  
+  <!-- fontawsome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  
+  <style>
+    h3{
+      text-align: center;
+    }
+    .col{
+      padding: 1em;
+    }
+    .collection{
+      border: none;
+    }
+    .big-container{
+      padding: 0 3em;
+    }
+    #setting{
+      margin-right: 1em;
+    }
+    #reset{
+      text-align: right;
+      color: #616161;
+    }
+    .fa-redo{
+      font-size: .8em;
+      transition: ease-out .3s;
+      cursor: pointer;
+    }
+    .fa-redo:hover{
+      color: #536dfe;
+      transform: rotate(360deg);
+    }
+    .options{
+      padding: 0 1em;
+      margin: .5em 1em;
+    }
+  </style>
 
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-            
-  </head>
-  <body>
-    <div>
-      <div class="container">
-        <div class="card">
-          <form
-            method="POST"
-            action="{% url 'index' %}"
-            class="col s12">
+  <script>
+    document.querySelector('input[name="filter"]:checked')
+    let radio = 
+  </script>
+  
+</head>
+<body>
+  <div>
+    <div class="container">
+      <div id="setting">
+        
+      </div>
+      <div class="card">
+        <form
+        method="POST"
+        action="{% url 'index' %}"
+        class="col s12">
         {% csrf_token %}
-
-          <h1>Requirement Classification</h1>
-          <div class="row">
-            <div class="input-field col s12">
-              <label for="title">
-                  {{ form.title.label }}
-              </label>
-              {{ form.title }}
-            </div>
+        
+        <h1>Requirement Classification</h1>
+        <div class="row">
+          <div class="input-field col s12">
+            <label for="title">
+              {{ form.title.label }}
+            </label>
+            {{ form.title }}
           </div>
-          <div class="row">
-            <div class="input-field col s12">
-              <label for="requirements">
-                  {{ form.requirements.label }}
-              </label>
-                {{ form.requirements }}
-            </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <label for="requirements">
+              {{ form.requirements.label }}
+            </label>
+            {{ form.requirements }}
           </div>
-
-          <div class="center group">
-            <input class="btn indigo" type="submit" value="Submit"/>
-            <button type="button" class="waves-effect waves-teal btn red" onclick="document.querySelector('#id_requirements').value = ''">clear</button>
-          </div>
+        </div>
+        
+        <div class="center group">
+          <input class="btn indigo" type="submit" value="Submit"/>
+          <button type="button" class="waves-effect waves-teal btn red" onclick="document.querySelector('#id_requirements').value = ''">clear</button>
+        </div>
       </form>
     </div>
   </div>
-      <div class="container">
-        {% if data %}
-          <div class="card">
-            <h3>All Requirements</h3>
-            <ul class="collection">
+  
+  <!-- Resault zone -->
+  
+  <!-- all requiments -->
+  <div class="big-container row">
+    <div class="col s3">
+      <div class="row" id="setting">
+        <div class="col s12">
+          <div class="row">
+            <div class="col s6"><h5>Filter</h5></div>
+            <div class="col s6">
+              <h5 id="reset">
+                <i class="fas fa-redo" title="Reset Filters"></i>
+              </h5>
+            </div>
+          </div>
+          <form action="#" name="filterF">
+            <p class="options">
+              <label>
+                <input class="with-gap" name="filter" type="radio" value="0" checked />
+                <span>Show All requiments</span>
+              </label>
+            </p>
+            <p class="options">
+              <label>
+                <input class="with-gap" name="filter" type="radio" value="1" />
+                <span>Show Group by Priority</span>
+              </label>
+            </p>
+            <p class="options">
+              <label>
+                <input class="with-gap" name="filter" type="radio" value="2" />
+                <span>Show Group by Functional</span>
+              </label>
+            </p>
+            <p class="options">
+              <label>
+                <input class="with-gap" name="filter" type="radio" value="3" />
+                <span>Show Group by Keywords</span>
+              </label>
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col s9">
+      {% if data %}
+      <div class="row card">
+        <div class="col-md-12">
+          <h3>All Requirements</h3>
+          <ul class="collection">
             {% for i in data.requirements %}
             <li class="collection-item">
-                ID: {{ i.id }}
-                | Priority: {{ i.priority }}
-                | Functionality: {{ i.functionality }}
-                | Keywords:
-                {% for j in i.keywords %}
-                    {{ j }}
-                {% endfor %}
-                 <br>
-                Requiment | "{{ i.description }}"<br>
-              </li>
+              ID: {{ i.id }}
+              | Priority: {{ i.priority }}
+              | Functionality: {{ i.functionality }}
+              | Keywords:
+              {% for j in i.keywords %}
+              {{ j }}
+              {% endfor %}
+              <br>
+              Requiment | "{{ i.description }}"<br>
+            </li>
             {% endfor %}
+          </ul>
+        </div>
+      </div>
+      
+      <!-- group by Priority -->
+      <div class="row card">
+        <div class="col s4">
+          <div class="col-md-12">
+            <h3>Low Priority</h3>
+            {% for i in data.by_priority.low %}
+            {{ i.id }} - {{ i.description }}<br>
+            {% endfor %}
+          </div>
+        </div>
+        
+        <div class="col s4">
+          <div class="col-md-12">
+            <h3>Medium Priority</h3>
+            <ul class="collection">
+              {% for i in data.by_priority.medium %}
+              <li class="collection-item">
+                {{ i.id }} - {{ i.description }}
+              </li>
+              {% endfor %}
             </ul>
           </div>
-          <div class="row">
-              <div class="col d-flex align-items-stretch">
-                  <div class="card col-md-12">
-                    <h3>High Priority</h3>
-                    {% for i in data.by_priority.high %}
-                        {{ i.id }} - {{ i.description }}<br>
-                    {% endfor %}
-                  </div>
-              </div>
-
-              <div class="col d-flex align-items-stretch">
-                  <div class="card col-md-12">
-                    <h3>Medium Priority</h3>
-                    {% for i in data.by_priority.medium %}
-                        {{ i.id }} - {{ i.description }}<br>
-                    {% endfor %}
-                  </div>
-              </div>
-
-              <div class="col d-flex align-items-stretch">
-                  <div class="card col-md-12">
-                    <h3>Low Priority</h3>
-                    {% for i in data.by_priority.low %}
-                        {{ i.id }} - {{ i.description }}<br>
-                    {% endfor %}
-                  </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="card col d-flex align-items-stretch">
-              <div class="col-md-12">
-                <h3>Functional</h3>
-                {% for i in data.by_functionality.functional %}
-                    {{ i.id }} - {{ i.description }}<br>
-                {% endfor %}
-              </div>
-            </div>
-            <div class="col d-flex align-items-stretch">
-              <div class="card col-md-12">
-                <h3>Non-Functional</h3>
-                {% for i in data.by_functionality.non_functional %}
-                    {{ i.id }} - {{ i.description }}<br>
-                {% endfor %}
-                </div>
-            </div>
-          </div>
-          <div class="col d-flex align-items-stretch">
-              <div class="card col-md-12">
-                <h3>Keywords</h3>
-                {% for i in data.by_keywords %}
-                    <h4>{{ i.keyword }}</h4>
-                    {% for j in i.requirements %}
-                        {{ j.id }} - {{ j.description }}<br>
-                    {% endfor %}
-                {% endfor %}
-              </div>
-          </div>
-        {% endif %}
+        </div>
+        
+        <div class="col s4">
+          <div class="col-md-12">
+            <h3>High Priority</h3>
+            <ul class="collection">
+              {% for i in data.by_priority.high %}
+              
+              {{ i.id }} - {{ i.description }}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      
     </div>
-
-
+    
+    <!-- group by Functional -->
+    
+    <div class="row card">
+      <div class="col s6">
+        <div class="col s12">
+          <h3>Functional</h3>
+          <ul class="collection">
+            {% for i in data.by_functionality.functional %}
+            <li class="collection-item">
+              {{ i.id }} - {{ i.description }}<br>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <div class="col s6">
+        <div class="col s12">
+          <h3>Non-Functional</h3>
+          <ul class="collection">
+            {% for i in data.by_functionality.non_functional %}
+            <li class="collection-item">
+              {{ i.id }} - {{ i.description }}<br>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row card">
+      <div class="col s12">
+        <h3>Keywords</h3>
+        <ul class="collection">
+          {% for i in data.by_keywords %}
+          <ul class="collection">
+            <h4>{{ i.keyword }}</h4>
+            {% for j in i.requirements %}
+            {{ j.id }} - {{ j.description }}<br>
+            {% endfor %}
+          </ul>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  
+</div>
 
 </div>
 
-  <script>
-  </script>
+<script>
+</script>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script src="{% static 'js/main.js' %}"></script>
-  </body>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="{% static 'js/main.js' %}"></script>
+</body>
 </html>
