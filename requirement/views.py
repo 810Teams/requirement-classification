@@ -1,7 +1,8 @@
 from django.shortcuts import render
 
-from requirement.analysis import RequirementData
+from requirement.analysis import RequirementData, create_tree
 from requirement.forms import RequirementForm
+from requirement.models import AnalyzedRequirement
 
 
 def index(request):
@@ -62,5 +63,18 @@ def index(request):
     #     'อยากได้แบบว่าเวลาที่รวดเร็วในการทำงานบางอย่าง',
     #     'อยากได้อะไรที่มันมีสีสันครับ',
     # ])
+
+    # for i in context['data'].requirements:
+    #     AnalyzedRequirement.objects.create(
+    #         text=i.description,
+    #         priority=i.priority,
+    #         is_functional=i.is_functional
+    #     )
+
+    create_tree(priority=2, show_result=True, remove_list=('NCMN', 'RPRE', 'VACT', 'VATT', 'VSTA'), result_title='High')
+    create_tree(priority=1, show_result=True, remove_list=('NCMN', 'RPRE', 'VACT', 'VATT', 'VSTA'), result_title='Medium')
+    create_tree(priority=0, show_result=True, remove_list=('NCMN', 'RPRE', 'VACT', 'VATT', 'VSTA'), result_title='Low')
+    create_tree(is_functional=False, show_result=True, remove_list=('NCMN',), result_title='Function')
+    create_tree(is_functional=True, show_result=True, remove_list=('NCMN',), result_title='Non-functional')
 
     return render(request, template_name='requirement/index.html', context=context)
