@@ -131,7 +131,7 @@
               {% else %}
                 <input class="with-gap" name="filter" type="radio" value="0"/>
               {% endif %}
-                <span>Show All requiments</span>
+                <span>Show All options</span>
               </label>
             </p>
             <p class="options">
@@ -141,7 +141,7 @@
               {% else %}
                 <input class="with-gap" name="filter" type="radio" value="1"/>
               {% endif %}
-                <span>Show Group by Priority</span>
+                <span>Show All Requirements</span>
               </label>
             </p>
             <p class="options">
@@ -151,7 +151,7 @@
               {% else %}
                 <input class="with-gap" name="filter" type="radio" value="2"/>
               {% endif %}
-                <span>Show Group by Functional</span>
+                <span>Show Group by Priority</span>
               </label>
             </p>
             <p class="options">
@@ -161,6 +161,16 @@
               {% else %}
                 <input class="with-gap" name="filter" type="radio" value="3"/>
               {% endif %}
+                <span>Show Group by Functional</span>
+              </label>
+            </p>
+            <p class="options">
+              <label>
+              {% if test == '4'%}
+                <input class="with-gap" name="filter" type="radio" value="4" checked />
+              {% else %}
+                <input class="with-gap" name="filter" type="radio" value="4"/>
+              {% endif %}
                 <span>Show Group by Keywords</span>
               </label>
             </p>
@@ -169,9 +179,8 @@
         </div>
       </div>
     </div>
-    
     <div class="col s9">
-      {% if data %}
+      {% if test == '0' or test == '1' %}
       <div class="row card">
         <div class="col-md-12">
           <h3>All Requirements</h3>
@@ -193,7 +202,7 @@
         </div>
       </div>
       {% endif %}
-      {% if test == '0' or test == '1' %}
+      {% if test == '0' or test == '2' %}
       <!-- group by Priority -->
       <div class="row card">
         <div class="col s4">
@@ -233,7 +242,7 @@
       
     </div>
     {% endif %}
-    {% if test == '0' or test == '2' %}
+    {% if test == '0' or test == '3' %}
     <!-- group by Functional -->
     
     <div class="row card">
@@ -263,7 +272,7 @@
       </div>
     </div>
     {% endif %}
-    {% if test == '0' or test == '3' %}
+    {% if test == '0' or test == '4' %}
     <div class="row card">
       <div class="col s12">
         <h3>Keywords</h3>
