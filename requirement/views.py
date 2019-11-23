@@ -15,10 +15,12 @@ def index(request):
                 form.cleaned_data.get('title'),
                 form.cleaned_data.get('requirements')
             )
+            test = request.POST.get('filter')
             context['success'] = "Analysis successful!"
         else:
             context['error'] = form.error
         context['form'] = form
+        context['test'] = test
     else:
         context['form'] = RequirementForm()
 

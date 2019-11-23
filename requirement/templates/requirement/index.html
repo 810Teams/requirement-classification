@@ -22,6 +22,9 @@
     h3{
       text-align: center;
     }
+    .hiding{
+      display: none;
+    }
     .col{
       padding: 1em;
     }
@@ -89,7 +92,9 @@
             {{ form.requirements }}
           </div>
         </div>
-        
+        <div class="hiding">
+          <input class="with-gap" name="filter" type="radio" value="0" checked />
+        </div>
         <div class="center group">
           <input class="btn indigo" type="submit" value="Submit"/>
           <button type="button" class="waves-effect waves-teal btn red" onclick="document.querySelector('#id_requirements').value = ''">clear</button>
@@ -113,31 +118,53 @@
               </h5>
             </div>
           </div>
-          <form action="#" name="filterF">
+          <form method="POST" action="{% url 'index' %}" name="filterF">
+          {% csrf_token %}
+          <div class="hiding">
+            {{ form.title }}
+            {{ form.requirements }}
+          </div>
             <p class="options">
               <label>
+              {% if test == '0'%}
                 <input class="with-gap" name="filter" type="radio" value="0" checked />
+              {% else %}
+                <input class="with-gap" name="filter" type="radio" value="0"/>
+              {% endif %}
                 <span>Show All requiments</span>
               </label>
             </p>
             <p class="options">
               <label>
-                <input class="with-gap" name="filter" type="radio" value="1" />
+              {% if test == '1'%}
+                <input class="with-gap" name="filter" type="radio" value="1" checked />
+              {% else %}
+                <input class="with-gap" name="filter" type="radio" value="1"/>
+              {% endif %}
                 <span>Show Group by Priority</span>
               </label>
             </p>
             <p class="options">
               <label>
-                <input class="with-gap" name="filter" type="radio" value="2" />
+              {% if test == '2'%}
+                <input class="with-gap" name="filter" type="radio" value="2" checked />
+              {% else %}
+                <input class="with-gap" name="filter" type="radio" value="2"/>
+              {% endif %}
                 <span>Show Group by Functional</span>
               </label>
             </p>
             <p class="options">
               <label>
-                <input class="with-gap" name="filter" type="radio" value="3" />
+              {% if test == '3'%}
+                <input class="with-gap" name="filter" type="radio" value="3" checked />
+              {% else %}
+                <input class="with-gap" name="filter" type="radio" value="3"/>
+              {% endif %}
                 <span>Show Group by Keywords</span>
               </label>
             </p>
+            <input class="btn indigo" type="submit" value="Filter"/>
           </form>
         </div>
       </div>
@@ -165,7 +192,8 @@
           </ul>
         </div>
       </div>
-      
+      {% endif %}
+      {% if test == '0' or test == '1' %}
       <!-- group by Priority -->
       <div class="row card">
         <div class="col s4">
@@ -204,7 +232,8 @@
       </div>
       
     </div>
-    
+    {% endif %}
+    {% if test == '0' or test == '2' %}
     <!-- group by Functional -->
     
     <div class="row card">
@@ -233,7 +262,8 @@
         </div>
       </div>
     </div>
-    
+    {% endif %}
+    {% if test == '0' or test == '3' %}
     <div class="row card">
       <div class="col s12">
         <h3>Keywords</h3>
