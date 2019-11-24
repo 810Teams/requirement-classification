@@ -28,6 +28,7 @@
     h5{
       /* text-align: center; */
       color: #616161;
+      font-size: 1.5em;
     }
     h3{
       text-align: left;
@@ -42,7 +43,7 @@
       padding: 1em;
     }
     .collection{
-      border: none;
+      /* border: none; */
     }
     .collection > h5{
       text-align: left;
@@ -80,13 +81,18 @@
     .shift-in{
       padding-left: 1em;
     }
+    .centered{
+      margin: .65rem auto;
+    }
   </style>
   
   <script>
     window.onload = function(){
       defHeight = document.querySelector("#setting").offsetTop-50;
+      window.scrollTo(0, document.querySelector("#setting").offsetTop-50)
+      
     }
-
+    
     window.onscroll = function(){
       
       console.log(window.scrollY)
@@ -97,7 +103,16 @@
         document.querySelector("#setting").classList.remove('fixed-s');
       }
     }
+    
   </script>
+  
+  {% if data %}
+  <script>
+    document.onload = function(){
+      window.scrollTo(0, document.querySelector("#setting").offsetTop-50)
+    }
+  </script>
+  {%endif%}
   
 </head>
 
@@ -154,204 +169,280 @@
           <ul class="collection">
             {% for i in data.requirements %}
             <li class="collection-item">
-              ID: {{ i.id }}
-              | Priority: {{ i.priority }}
-              | Functionality: {{ i.functionality }}
-              | Keywords:
-              {% for j in i.keywords %}
-              {{ j }}
-              {% endfor %}
-              <br>
-              Requiment | "{{ i.description }}"<br>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-      {% if test == '0'%}
-      <div class="divider"></div>
-      {% endif %}
-      {% endif %}
-      {% if test == '0' or test == '2' %}
-      <!-- group by Priority -->
-      <div class="row" style="padding: 2em 0 2em 3em;">
-        <h3>Group by Priority</h3>
-        <div class="col s4">
-          <div class="col-md-12">
-            <h5>Low Priority</h5>
-            <ul class="collection">
-              {% for i in data.by_priority.low %}
-              <li class="collection-item">
-                {{ i.id }} - {{ i.description }}<br>
+              <div class="row" style="margin-top: 1em;">
+                <!-- id -->
+                <div class="col s1">{{ i.id }}</div>
+
+                <!-- priority -->
+                {% if i.priority == 0 %}
+                <div class="col s3">Priority | <b style="color: #00bfa5;"> Low </b></div>
+                {% elif i.priority == 1 %}
+                <div class="col s3">Priority | <b style="color: #ffab00;"> Medium </b></div>
+                {% else %}
+                <div class="col s3">Priority | <b style="color: #ff3d00;"> High </b></div>
+                {% endif %}
+
+                <!-- functionality -->
+                {% if i.functionality %}
+                <div class="col s3"> Functionality | <b style="color: #00bfa5;"> {{ i.functionality }} </b></div>
+                {% else %}
+                <div class="col s3"> Functionality | <b style="color: #ff3d00;"> {{ i.functionality }} </b></div>
+                {% endif %}
+                
+                <!-- keywords -->
+                <div class="col s5">Keywords | <b> {% for j in i.keywords %} {{ j }} {% endfor %} </b></div>
+              </div>
+              <!-- ID: {{ i.id }}
+                | Priority: {{ i.priority }}
+                | Functionality: {{ i.functionality }}
+                | Keywords:
+                {% for j in i.keywords %}
+                {{ j }}
+                {% endfor %} -->
+                <br>
+                <div class="row">
+                  <div class="col s1"></div>
+                  <div class="col s11" style="font-size: 1.2em;">
+                      Requiment | <span style="color: #536dfe; font-weight: bold;">"{{ i.description }}"</span>
+                  </div>
+                </div>
               </li>
               {% endfor %}
             </ul>
           </div>
         </div>
-        
-        <div class="col s4">
-          <div class="col-md-12">
-            <h5>Medium Priority</h5>
-            <ul class="collection">
-              {% for i in data.by_priority.medium %}
-              <li class="collection-item">
-                {{ i.id }} - {{ i.description }}
-              </li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-        
-        <div class="col s4">
-          <div class="col-md-12">
-            <h5>High Priority</h5>
-            <ul class="collection">
-              {% for i in data.by_priority.high %}
-              <li class="collection-item">
-                {{ i.id }} - {{ i.description }}
-              </li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-      </div>
-      {% if test == '0'%}
-      <div class="divider"></div>
-      {% endif %}
-      {% endif %}
-      {% if test == '0' or test == '3' %}
-      <!-- group by Functional -->
-      
-      <div class="row " style="padding: 2em 0 2em 3em;">
-        <h3>Group by Functionality</h3>
-        <div class="col s6">
-          <div class="col s12">
-            <h5>Functional</h5>
-            <ul class="collection">
-              {% for i in data.by_functionality.functional %}
-              <li class="collection-item">
-                {{ i.id }} - {{ i.description }}<br>
-              </li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-        <div class="col s6">
-          <div class="col s12">
-            <h5>Non-Functional</h5>
-            <ul class="collection">
-              {% for i in data.by_functionality.non_functional %}
-              <li class="collection-item">
-                {{ i.id }} - {{ i.description }}<br>
-              </li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-      </div>
-      {% if test == '0'%}
-      <div class="divider"></div>
-      {% endif %}
-      {% endif %}
-      {% if test == '0' or test == '4' %}
-      <div class="row">
-        <div class="col s12" style="padding: 0 3em;">
-          <h3>Keywords</h3>
-          <ul class="collection">
-            {% for i in data.by_keywords %}
-            <li class="collection-item">
-              <h5>{{ i.keyword }}</h5>
-              {% for j in i.requirements %}
-              {{ j.id }} - {{ j.description }}<br>
-              {% endfor %}
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-      {% endif %}
-    </div>
-    
-    <div class="col s3">
-      <div class="row" id="setting">
-        <div class="col s12">
-          <div class="row">
-            <div class="col s12"><h5>Filter</h5></div>
-          </div>
-          <form method="POST" action="{% url 'index' %}" name="filterF">
-            {% csrf_token %}
-            <div class="hiding">
-              {{ form.title }}
-              {{ form.requirements }}
+        {% if test == '0'%}
+        <div class="divider"></div>
+        {% endif %}
+        {% endif %}
+        {% if test == '0' or test == '2' %}
+        <!-- group by Priority -->
+        <div class="row" style="padding: 2em 0 2em 3em;">
+          <h3>Group by Priority</h3>
+          <div class="col s4">
+            <div class="col-md-12">
+              <h5 style="color: #00bfa5; ">Low Priority</h5>
+              <ul class="collection">
+                {% for i in data.by_priority.low %}
+                <li class="collection-item">
+                  <div class="row centered">
+                    <div class="col s1">
+                      {{ i.id }}
+                    </div>
+                    <div class="col s11">
+                      {{ i.description }}
+                    </div>
+                  </div>
+                  
+                </li>
+                {% endfor %}
+              </ul>
             </div>
-            <p class="options">
-              <label>
-                {% if test == '0'%}
-                <input class="with-gap" name="filter" type="radio" value="0" checked />
-                {% else %}
-                <input class="with-gap" name="filter" type="radio" value="0"/>
-                {% endif %}
-                <span>Show All options</span>
-              </label>
-            </p>
-            <p class="options">
-              <label>
-                {% if test == '1'%}
-                <input class="with-gap" name="filter" type="radio" value="1" checked />
-                {% else %}
-                <input class="with-gap" name="filter" type="radio" value="1"/>
-                {% endif %}
-                <span>Show All Requirements</span>
-              </label>
-            </p>
-            <p class="options">
-              <label>
-                {% if test == '2'%}
-                <input class="with-gap" name="filter" type="radio" value="2" checked />
-                {% else %}
-                <input class="with-gap" name="filter" type="radio" value="2"/>
-                {% endif %}
-                <span>Show Group by Priority</span>
-              </label>
-            </p>
-            <p class="options">
-              <label>
-                {% if test == '3'%}
-                <input class="with-gap" name="filter" type="radio" value="3" checked />
-                {% else %}
-                <input class="with-gap" name="filter" type="radio" value="3"/>
-                {% endif %}
-                <span>Show Group by Functionality</span>
-              </label>
-            </p>
-            <p class="options">
-              <label>
-                {% if test == '4'%}
-                <input class="with-gap" name="filter" type="radio" value="4" checked />
-                {% else %}
-                <input class="with-gap" name="filter" type="radio" value="4"/>
-                {% endif %}
-                <span>Show Group by Keywords</span>
-              </label>
-            </p>
-            <br>
-            <input class="btn indigo" type="submit" value="Filter"/>
-          </form>
+          </div>
+          
+          <div class="col s4">
+            <div class="col-md-12">
+              <h5 style="color: #ffab00;">Medium Priority</h5>
+              <ul class="collection">
+                {% for i in data.by_priority.medium %}
+                <li class="collection-item">
+                  <div class="row centered">
+                    <div class="col s1">
+                      {{ i.id }}
+                    </div>
+                    <div class="col s11">
+                      {{ i.description }}
+                    </div>
+                  </div>
+                  
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          
+          <div class="col s4">
+            <div class="col-md-12">
+              <h5 style="color: #ff3d00;">High Priority</h5>
+              <ul class="collection">
+                {% for i in data.by_priority.high %}
+                <li class="collection-item">
+                  <div class="row centered">
+                    <div class="col s1">
+                      {{ i.id }}
+                    </div>
+                    <div class="col s11">
+                      {{ i.description }}
+                    </div>
+                  </div>
+                  
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+        {% if test == '0'%}
+        <div class="divider"></div>
+        {% endif %}
+        {% endif %}
+        {% if test == '0' or test == '3' %}
+        <!-- group by Functional -->
+        
+        <div class="row " style="padding: 2em 0 2em 3em;">
+          <h3>Group by Functionality</h3>
+          <div class="col s6">
+            <div class="col s12">
+              <h5>Functional</h5>
+              <ul class="collection">
+                {% for i in data.by_functionality.functional %}
+                <li class="collection-item">
+                  <div class="row centered">
+                    <div class="col s1">
+                      {{ i.id }}
+                    </div>
+                    <div class="col s11">
+                      {{ i.description }}
+                    </div>
+                  </div>
+                  
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <div class="col s6">
+            <div class="col s12">
+              <h5>Non-Functional</h5>
+              <ul class="collection">
+                {% for i in data.by_functionality.non_functional %}
+                <li class="collection-item">
+                  <div class="row centered">
+                    <div class="col s1">
+                      {{ i.id }}
+                    </div>
+                    <div class="col s11">
+                      {{ i.description }}
+                    </div>
+                  </div>
+                  
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+        {% if test == '0'%}
+        <div class="divider"></div>
+        {% endif %}
+        {% endif %}
+        {% if test == '0' or test == '4' %}
+        <div class="row">
+          <div class="col s12" style="padding: 0 3em;">
+            <h3>Keywords</h3>
+            <ul class="collection" style="border: none;">
+              {% for i in data.by_keywords %}
+              <li class="collection-item" >
+                <h5>{{ i.keyword }}</h5>
+                <ul class="collection">
+                  {% for j in i.requirements %}
+                  <li class="collection-item" >
+                    <div class="row centered">
+                      <div class="col s1" style="text-align: center; font-weight: bold;">{{ j.id }}</div>
+                      <div class="col1 s11">{{ j.description }}</div>
+                    </div>
+                  </li>
+                  {% endfor %}
+                </ul>
+                <br>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      
+      <div class="col s3">
+        <div class="row" id="setting">
+          <div class="col s12">
+            <div class="row">
+              <div class="col s12"><h5>Filter</h5></div>
+            </div>
+            <form method="POST" action="{% url 'index' %}" name="filterF">
+              {% csrf_token %}
+              <div class="hiding">
+                {{ form.title }}
+                {{ form.requirements }}
+              </div>
+              <p class="options">
+                <label>
+                  {% if test == '0'%}
+                  <input class="with-gap" name="filter" type="radio" value="0" checked />
+                  {% else %}
+                  <input class="with-gap" name="filter" type="radio" value="0"/>
+                  {% endif %}
+                  <span>Show All options</span>
+                </label>
+              </p>
+              <p class="options">
+                <label>
+                  {% if test == '1'%}
+                  <input class="with-gap" name="filter" type="radio" value="1" checked />
+                  {% else %}
+                  <input class="with-gap" name="filter" type="radio" value="1"/>
+                  {% endif %}
+                  <span>Show All Requirements</span>
+                </label>
+              </p>
+              <p class="options">
+                <label>
+                  {% if test == '2'%}
+                  <input class="with-gap" name="filter" type="radio" value="2" checked />
+                  {% else %}
+                  <input class="with-gap" name="filter" type="radio" value="2"/>
+                  {% endif %}
+                  <span>Show Group by Priority</span>
+                </label>
+              </p>
+              <p class="options">
+                <label>
+                  {% if test == '3'%}
+                  <input class="with-gap" name="filter" type="radio" value="3" checked />
+                  {% else %}
+                  <input class="with-gap" name="filter" type="radio" value="3"/>
+                  {% endif %}
+                  <span>Show Group by Functionality</span>
+                </label>
+              </p>
+              <p class="options">
+                <label>
+                  {% if test == '4'%}
+                  <input class="with-gap" name="filter" type="radio" value="4" checked />
+                  {% else %}
+                  <input class="with-gap" name="filter" type="radio" value="4"/>
+                  {% endif %}
+                  <span>Show Group by Keywords</span>
+                </label>
+              </p>
+              <br>
+              <input class="btn indigo" type="submit" value="Filter"/>
+            </form>
+          </div>
         </div>
       </div>
+      
     </div>
+    {% endif %}
     
   </div>
-  {% endif %}
   
-</div>
-
-<script>
-</script>
-
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-<script src="{% static 'js/main.js' %}"></script>
+  <script>
+  </script>
+  
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>
