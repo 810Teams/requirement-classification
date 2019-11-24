@@ -3,140 +3,355 @@
 {% load static %}
 
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Requirement Classification</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
-  </head>
-  <body>
-    <div>
-      <form
-            method="POST"
-            action="{% url 'index' %}">
-        {% csrf_token %}
-        <div class="form-group container card">
-
-        <h1>Requirement Classification</h1>
-          <br>
-
-        <div class="form-group">
-          <label for="title">
-              {{ form.title.label }}
-          </label>
-          {{ form.title }}
-        </div>
-        <div class="form-group">
-          <label for="requirements">
-              {{ form.requirements.label }}
-          </label>
-          {{ form.requirements }}
-        </div>
-
-        <div class="center group">
-          <input class="btn btn-primary" type="submit" value="Submit" />
-          <input type="button" class="btn btn-outline-danger" onclick="clear()" value="clear"/>
-        </div>
-      </div>
-
-      </form>
-      <div class="container">
-        {% if data %}
-          <div class="card">
-            <h3>All Requirements</h3>
-            <ul class="list-group list-group-flush">
-            {% for i in data.requirements %}
-            <li class="list-group-item">
-                ID: {{ i.id }}
-                | Priority: {{ i.priority }}
-                | Functionality: {{ i.is_functional }}
-                | Keywords:
-                {% for j in i.keywords %}
-                    {{ j }}
-                {% endfor %}
-
-                | {{ i.description }}<br>
-              </li>
-            {% endfor %}
-            </ul>
-          </div>
-          <div class="row">
-              <div class="col d-flex align-items-stretch">
-                  <div class="card col-md-12">
-                    <h3>High Priority</h3>
-                    {% for i in data.by_priority.high %}
-                        {{ i.id }} - {{ i.description }}<br>
-                    {% endfor %}
-                  </div>
-              </div>
-
-              <div class="col d-flex align-items-stretch">
-                  <div class="card col-md-12">
-                    <h3>Medium Priority</h3>
-                    {% for i in data.by_priority.medium %}
-                        {{ i.id }} - {{ i.description }}<br>
-                    {% endfor %}
-                  </div>
-              </div>
-
-              <div class="col d-flex align-items-stretch">
-                  <div class="card col-md-12">
-                    <h3>Low Priority</h3>
-                    {% for i in data.by_priority.low %}
-                        {{ i.id }} - {{ i.description }}<br>
-                    {% endfor %}
-                  </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="card col d-flex align-items-stretch">
-              <div class="col-md-12">
-                <h3>Functional</h3>
-                {% for i in data.by_functionality.functional %}
-                    {{ i.id }} - {{ i.description }}<br>
-                {% endfor %}
-              </div>
-            </div>
-            <div class="col d-flex align-items-stretch">
-              <div class="card col-md-12">
-                <h3>Non-Functional</h3>
-                {% for i in data.by_functionality.non_functional %}
-                    {{ i.id }} - {{ i.description }}<br>
-                {% endfor %}
-                </div>
-            </div>
-          </div>
-          <div class="col d-flex align-items-stretch">
-              <div class="card col-md-12">
-                <h3>Keywords</h3>
-                {% for i in data.by_keywords %}
-                    <h4>{{ i.keyword }}</h4>
-                    {% for j in i.requirements %}
-                        {{ j.id }} - {{ j.description }}<br>
-                    {% endfor %}
-                {% endfor %}
-              </div>
-          </div>
-        {% endif %}
-    </div>
-
-
-
-</div>
-
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Requirement Classification</title>
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  
+  <!-- fontawsome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  
+  <style>
+    body{
+      background: #F5F7FB;
+    }
+    h2{
+      font-weight: bold;
+    }
+    h5{
+      /* text-align: center; */
+      color: #616161;
+    }
+    h3{
+      text-align: left;
+      font-size: 1.6em;
+      color: #651fff;
+      font-weight: bold;
+    }
+    .hiding{
+      display: none;
+    }
+    .col{
+      padding: 1em;
+    }
+    .collection{
+      border: none;
+    }
+    .collection > h5{
+      text-align: left;
+    }
+    .big-container{
+      padding: 0 3em;
+    }
+    #setting{
+      margin-right: 1em;
+      padding: 0 0 0 2em;
+      transition: .3s;
+    }
+    .fixed-s{
+      position: fixed;
+      width: 22.3vw;
+      top: 3em;
+    }
+    #reset{
+      text-align: right;
+      color: #616161;
+    }
+    .fa-redo{
+      font-size: .8em;
+      transition: ease-out .3s;
+      cursor: pointer;
+    }
+    .fa-redo:hover{
+      color: #536dfe;
+      transform: rotate(360deg);
+    }
+    .options{
+      padding: 0 1em;
+      margin: .5em 1em;
+    }
+    .shift-in{
+      padding-left: 1em;
+    }
+  </style>
+  
   <script>
-    function clear(){
-      confirm("are you sure?")
-      document.querySelector("#id_requirements").value = ""
+    window.onload = function(){
+      defHeight = document.querySelector("#setting").offsetTop-50;
+    }
+
+    window.onscroll = function(){
+      
+      console.log(window.scrollY)
+      if(window.scrollY >= defHeight){
+        document.querySelector("#setting").classList.add('fixed-s');
+      }
+      else{
+        document.querySelector("#setting").classList.remove('fixed-s');
+      }
     }
   </script>
+  
+</head>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script src="{% static 'js/main.js' %}"></script>
-  </body>
+<body>
+  <div>
+    <div class="big-container">
+      <div class="">
+        <form
+        method="POST"
+        action="{% url 'index' %}"
+        class="col s12 card">
+        {% csrf_token %}
+        
+        <h2>Requirement Classification</h2>
+        <div class="row" style="padding: 0 0 0 1em; margin-bottom: 0px; margin-top: 2em;">
+          <div class="input-field col s12">
+            <label for="title">
+              {{ form.title.label }}
+            </label>
+            {{ form.title }}
+          </div>
+        </div>
+        <div class="row" style="padding: 0 0 0 1em; margin-bottom: 0px;">
+          <div class="input-field col s12">
+            <label for="requirements">
+              {{ form.requirements.label }}
+            </label>
+            {{ form.requirements }}
+          </div>
+        </div>
+        <div class="hiding">
+          <input class="with-gap" name="filter" type="radio" value="0" checked />
+        </div>
+        <div class="center group">
+          <input class="btn indigo" type="submit" value="Submit"/>
+          <button type="button" class="waves-effect waves-teal btn red" onclick="document.querySelector('#id_requirements').value = ''">clear</button>
+        </div>
+        <br>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Resault zone -->
+  <br>
+  <!-- all requiments -->
+  {% if data %}
+  <div class="big-container row">
+    <div class="col s9 card">
+      <h2 style="padding: 0 .6em;">Result</h2>
+      {% if test == '0' or test == '1' %}
+      <div class="row " style="padding: 1em 0 2em 0.5em;">
+        <div class="col-md-12" style="padding: 0 3em;">
+          <h3>All Requirements</h3>
+          <ul class="collection">
+            {% for i in data.requirements %}
+            <li class="collection-item">
+              ID: {{ i.id }}
+              | Priority: {{ i.priority }}
+              | Functionality: {{ i.functionality }}
+              | Keywords:
+              {% for j in i.keywords %}
+              {{ j }}
+              {% endfor %}
+              <br>
+              Requiment | "{{ i.description }}"<br>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% if test == '0'%}
+      <div class="divider"></div>
+      {% endif %}
+      {% endif %}
+      {% if test == '0' or test == '2' %}
+      <!-- group by Priority -->
+      <div class="row" style="padding: 2em 0 2em 3em;">
+        <h3>Group by Priority</h3>
+        <div class="col s4">
+          <div class="col-md-12">
+            <h5>Low Priority</h5>
+            <ul class="collection">
+              {% for i in data.by_priority.low %}
+              <li class="collection-item">
+                {{ i.id }} - {{ i.description }}<br>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        
+        <div class="col s4">
+          <div class="col-md-12">
+            <h5>Medium Priority</h5>
+            <ul class="collection">
+              {% for i in data.by_priority.medium %}
+              <li class="collection-item">
+                {{ i.id }} - {{ i.description }}
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        
+        <div class="col s4">
+          <div class="col-md-12">
+            <h5>High Priority</h5>
+            <ul class="collection">
+              {% for i in data.by_priority.high %}
+              <li class="collection-item">
+                {{ i.id }} - {{ i.description }}
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+      {% if test == '0'%}
+      <div class="divider"></div>
+      {% endif %}
+      {% endif %}
+      {% if test == '0' or test == '3' %}
+      <!-- group by Functional -->
+      
+      <div class="row " style="padding: 2em 0 2em 3em;">
+        <h3>Group by Functionality</h3>
+        <div class="col s6">
+          <div class="col s12">
+            <h5>Functional</h5>
+            <ul class="collection">
+              {% for i in data.by_functionality.functional %}
+              <li class="collection-item">
+                {{ i.id }} - {{ i.description }}<br>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        <div class="col s6">
+          <div class="col s12">
+            <h5>Non-Functional</h5>
+            <ul class="collection">
+              {% for i in data.by_functionality.non_functional %}
+              <li class="collection-item">
+                {{ i.id }} - {{ i.description }}<br>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+      {% if test == '0'%}
+      <div class="divider"></div>
+      {% endif %}
+      {% endif %}
+      {% if test == '0' or test == '4' %}
+      <div class="row">
+        <div class="col s12" style="padding: 0 3em;">
+          <h3>Keywords</h3>
+          <ul class="collection">
+            {% for i in data.by_keywords %}
+            <li class="collection-item">
+              <h5>{{ i.keyword }}</h5>
+              {% for j in i.requirements %}
+              {{ j.id }} - {{ j.description }}<br>
+              {% endfor %}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    
+    <div class="col s3">
+      <div class="row" id="setting">
+        <div class="col s12">
+          <div class="row">
+            <div class="col s12"><h5>Filter</h5></div>
+          </div>
+          <form method="POST" action="{% url 'index' %}" name="filterF">
+            {% csrf_token %}
+            <div class="hiding">
+              {{ form.title }}
+              {{ form.requirements }}
+            </div>
+            <p class="options">
+              <label>
+                {% if test == '0'%}
+                <input class="with-gap" name="filter" type="radio" value="0" checked />
+                {% else %}
+                <input class="with-gap" name="filter" type="radio" value="0"/>
+                {% endif %}
+                <span>Show All options</span>
+              </label>
+            </p>
+            <p class="options">
+              <label>
+                {% if test == '1'%}
+                <input class="with-gap" name="filter" type="radio" value="1" checked />
+                {% else %}
+                <input class="with-gap" name="filter" type="radio" value="1"/>
+                {% endif %}
+                <span>Show All Requirements</span>
+              </label>
+            </p>
+            <p class="options">
+              <label>
+                {% if test == '2'%}
+                <input class="with-gap" name="filter" type="radio" value="2" checked />
+                {% else %}
+                <input class="with-gap" name="filter" type="radio" value="2"/>
+                {% endif %}
+                <span>Show Group by Priority</span>
+              </label>
+            </p>
+            <p class="options">
+              <label>
+                {% if test == '3'%}
+                <input class="with-gap" name="filter" type="radio" value="3" checked />
+                {% else %}
+                <input class="with-gap" name="filter" type="radio" value="3"/>
+                {% endif %}
+                <span>Show Group by Functionality</span>
+              </label>
+            </p>
+            <p class="options">
+              <label>
+                {% if test == '4'%}
+                <input class="with-gap" name="filter" type="radio" value="4" checked />
+                {% else %}
+                <input class="with-gap" name="filter" type="radio" value="4"/>
+                {% endif %}
+                <span>Show Group by Keywords</span>
+              </label>
+            </p>
+            <br>
+            <input class="btn indigo" type="submit" value="Filter"/>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  {% endif %}
+  
+</div>
+
+<script>
+</script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="{% static 'js/main.js' %}"></script>
+</body>
 </html>
