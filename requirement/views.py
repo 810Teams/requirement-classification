@@ -1,12 +1,15 @@
 from django.shortcuts import render
 
-from requirement.analysis import RequirementData, create_tree
+from requirement.analysis import RequirementData, create_tree, create_sample_data
 from requirement.forms import RequirementForm
 from requirement.models import AnalyzedRequirement
 
 
 def index(request):
     ''' View Method: Index '''
+    priority_filter = [i.replace('\n', '').strip() for i in open('requirement/data/priority_filter.txt')]
+    functionality_filter = [i.replace('\n', '').strip() for i in open('requirement/data/functionality_filter.txt')]
+
     context = dict()
 
     if request.method == 'POST':
@@ -16,12 +19,11 @@ def index(request):
                 form.cleaned_data.get('title'),
                 form.cleaned_data.get('requirements')
             )
-            test = request.POST.get('filter')
+            context['test'] = request.POST.get('filter')
             context['success'] = "Analysis successful!"
         else:
             context['error'] = form.error
         context['form'] = form
-        context['test'] = test
     else:
         context['form'] = RequirementForm()
 
@@ -73,10 +75,12 @@ def index(request):
     #         is_functional=i.is_functional
     #     )
 
-    create_tree(priority=2, show_result=True, remove_list=('NCMN', 'RPRE', 'VACT', 'VATT', 'VSTA'), result_title='High')
-    create_tree(priority=1, show_result=True, remove_list=('NCMN', 'RPRE', 'VACT', 'VATT', 'VSTA'), result_title='Medium')
-    create_tree(priority=0, show_result=True, remove_list=('NCMN', 'RPRE', 'VACT', 'VATT', 'VSTA'), result_title='Low')
-    create_tree(is_functional=False, show_result=True, remove_list=('NCMN',), result_title='Function')
-    create_tree(is_functional=True, show_result=True, remove_list=('NCMN',), result_title='Non-functional')
+    create_tree(priority=2, show_result=True, remove_list=priority_filter, result_title='High')
+    create_tree(priority=1, show_result=True, remove_list=priority_filter, result_title='Medium')
+    create_tree(priority=0, show_result=True, remove_list=priority_filter, result_title='Low')
+    create_tree(is_functional=False, show_result=True, remove_list=functionality_filter, result_title='Function')
+    create_tree(is_functional=True, show_result=True, remove_list=functionality_filter, result_title='Non-functional')
+
+    # create_sample_data(clear_all=True)
 
     return render(request, template_name='requirement/index.html', context=context)

@@ -153,7 +153,9 @@ KEYWORDS_NON_FUNCTIONAL = [
 ]
 
 
-def get_data_group_by_priority(data, remove_list=('NCMN', 'RPRE', 'VACT', 'VATT', 'VSTA')):
+def get_data_group_by_priority(data, use_sample=True):
+    remove_list = [i.replace('\n', '').strip() for i in open('requirement/data/priority_filter.txt')]
+
     list_high = list()
     list_medium = list()
     list_low = list()
@@ -161,11 +163,14 @@ def get_data_group_by_priority(data, remove_list=('NCMN', 'RPRE', 'VACT', 'VATT'
     for i in data:
         score = [0, 0, 0]
 
-        score[0] = calculate_score_sample(i, priority=0, remove_list=remove_list)
-        score[1] = calculate_score_sample(i, priority=1, remove_list=remove_list)
-        score[2] = calculate_score_sample(i, priority=2, remove_list=remove_list)
-
-        # print(i.description, score)
+        if use_sample:
+            score[0] = calculate_score_sample(i, priority=0, remove_list=remove_list)
+            score[1] = calculate_score_sample(i, priority=1, remove_list=remove_list)
+            score[2] = calculate_score_sample(i, priority=2, remove_list=remove_list)
+        else:
+            score[0] = calculate_score_classic(i, KEYWORDS_HIGH_PRIORITY)
+            score[1] = calculate_score_classic(i, KEYWORDS_MEDIUM_PRIORITY)
+            score[2] = calculate_score_classic(i, KEYWORDS_LOW_PRIORITY)
 
         try:
             result = round((score[0] * 0 + score[1] * 1 + score[2] * 2)/sum(score))
@@ -182,15 +187,21 @@ def get_data_group_by_priority(data, remove_list=('NCMN', 'RPRE', 'VACT', 'VATT'
     return list_high, list_medium, list_low
 
 
-def get_data_group_by_functionality(data, remove_list=('NCMN',)):
+def get_data_group_by_functionality(data, use_sample=False):
+    remove_list = [i.replace('\n', '').strip() for i in open('requirement/data/functionality_filter.txt')]
+
     list_functional = list()
     list_non_functional = list()
 
     for i in data:
         score = [0, 0]
 
-        score[0] = calculate_score_sample(i, is_functional=False, remove_list=remove_list)
-        score[1] = calculate_score_sample(i, is_functional=True, remove_list=remove_list)
+        if use_sample:
+            score[0] = calculate_score_sample(i, is_functional=False, remove_list=remove_list)
+            score[1] = calculate_score_sample(i, is_functional=True, remove_list=remove_list)
+        else:
+            score[0] = calculate_score_classic(i, KEYWORDS_FUNCTIONAL)
+            score[1] = calculate_score_classic(i, KEYWORDS_NON_FUNCTIONAL)
 
         try:
             result = round((score[0] * 2 + score[1] * 1)/sum(score))
@@ -250,7 +261,7 @@ def get_data_group_by_keyword(data):
     return dict_keywords
 
 
-def calculate_score_keywords(data, source):
+def calculate_score_classic(data, source):
     score = 0
 
     for i in source:
@@ -333,3 +344,22 @@ def dive_tree_compare(node=TreeNode(None), item=(), level=0):
             level=level + 1
         ) + 1
     return 0
+
+
+def create_sample_data(clear_all=False):
+    if clear_all:
+        AnalyzedRequirement.objects.all().delete()
+
+    data = [
+        i.replace('\n', '').split(',') for i in open('requirement/data/sample_data.csv', encoding='utf-8')
+    ][1:]
+
+    data = [
+        (AnalyzedRequirement.objects.create(
+            text=i[0],
+            priority=int(i[1]),
+            is_functional=bool(int(i[2]))
+        ), print(i)) for i in data
+    ]
+
+    print(data)
