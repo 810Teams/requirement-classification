@@ -3,8 +3,8 @@ from django.core import validators
 from django.core.exceptions import ValidationError
 
 class RequirementForm(forms.Form):
-    title = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class' : 'validate'}))
-    requirements = forms.CharField(required=True, widget=forms.Textarea(attrs={'class' : 'materialize-textarea', 'id': 'id_requirements'}))
+    title = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class' : 'validate shift-in'}))
+    requirements = forms.CharField(required=True, widget=forms.Textarea(attrs={'class' : 'materialize-textarea shift-in', 'id': 'id_requirements'}))
 
     error = None
 

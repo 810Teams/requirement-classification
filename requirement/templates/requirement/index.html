@@ -19,6 +19,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   
   <style>
+    body{
+      background: #F5F7FB;
+    }
     h2{
       font-weight: bold;
     }
@@ -28,7 +31,9 @@
     }
     h3{
       text-align: left;
-      font-size: 2em;
+      font-size: 1.6em;
+      color: #651fff;
+      font-weight: bold;
     }
     .hiding{
       display: none;
@@ -72,17 +77,25 @@
       padding: 0 1em;
       margin: .5em 1em;
     }
+    .shift-in{
+      padding-left: 1em;
+    }
   </style>
-
+  
   <script>
-    window.onscroll = function(){
+    window.onload = function(){
+      defHeight = document.querySelector("#setting").offsetTop-50;
+    }
 
-    if(window.scrollY >= document.querySelector("#setting").scrollWidth){
-      document.querySelector("#setting").classList.add('fixed-s');
-    }
-    else{
-      document.querySelector("#setting").classList.remove('fixed-s');
-    }
+    window.onscroll = function(){
+      
+      console.log(window.scrollY)
+      if(window.scrollY >= defHeight){
+        document.querySelector("#setting").classList.add('fixed-s');
+      }
+      else{
+        document.querySelector("#setting").classList.remove('fixed-s');
+      }
     }
   </script>
   
@@ -95,11 +108,11 @@
         <form
         method="POST"
         action="{% url 'index' %}"
-        class="col s12">
+        class="col s12 card">
         {% csrf_token %}
         
         <h2>Requirement Classification</h2>
-        <div class="row">
+        <div class="row" style="padding: 0 0 0 1em; margin-bottom: 0px; margin-top: 2em;">
           <div class="input-field col s12">
             <label for="title">
               {{ form.title.label }}
@@ -107,7 +120,7 @@
             {{ form.title }}
           </div>
         </div>
-        <div class="row">
+        <div class="row" style="padding: 0 0 0 1em; margin-bottom: 0px;">
           <div class="input-field col s12">
             <label for="requirements">
               {{ form.requirements.label }}
@@ -122,12 +135,12 @@
           <input class="btn indigo" type="submit" value="Submit"/>
           <button type="button" class="waves-effect waves-teal btn red" onclick="document.querySelector('#id_requirements').value = ''">clear</button>
         </div>
+        <br>
       </form>
     </div>
   </div>
   
   <!-- Resault zone -->
-  <br>
   <br>
   <!-- all requiments -->
   {% if data %}
@@ -135,7 +148,7 @@
     <div class="col s9 card">
       <h2 style="padding: 0 .6em;">Result</h2>
       {% if test == '0' or test == '1' %}
-      <div class="row ">
+      <div class="row " style="padding: 1em 0 2em 0.5em;">
         <div class="col-md-12" style="padding: 0 3em;">
           <h3>All Requirements</h3>
           <ul class="collection">
@@ -155,20 +168,24 @@
           </ul>
         </div>
       </div>
-        {% if test == '0'%}
-        <div class="divider"></div>
-        {% endif %}
+      {% if test == '0'%}
+      <div class="divider"></div>
+      {% endif %}
       {% endif %}
       {% if test == '0' or test == '2' %}
       <!-- group by Priority -->
-      <div class="row" style="padding: 0 0 0 3em;">
+      <div class="row" style="padding: 2em 0 2em 3em;">
         <h3>Group by Priority</h3>
         <div class="col s4">
           <div class="col-md-12">
             <h5>Low Priority</h5>
-            {% for i in data.by_priority.low %}
-            {{ i.id }} - {{ i.description }}<br>
-            {% endfor %}
+            <ul class="collection">
+              {% for i in data.by_priority.low %}
+              <li class="collection-item">
+                {{ i.id }} - {{ i.description }}<br>
+              </li>
+              {% endfor %}
+            </ul>
           </div>
         </div>
         
@@ -190,148 +207,143 @@
             <h5>High Priority</h5>
             <ul class="collection">
               {% for i in data.by_priority.high %}
-              
-              {{ i.id }} - {{ i.description }}
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-    </div>
-    {% if test == '0'%}
-      <div class="divider"></div>
-      {% endif %}
-    {% endif %}
-    {% if test == '0' or test == '3' %}
-    <!-- group by Functional -->
-    
-    <div class="row " style="padding: 0 0 0 3em;">
-        <h3>Group by Functionality</h3>
-      <div class="col s6">
-        <div class="col s12">
-          <h5>Functional</h5>
-          <ul class="collection">
-            {% for i in data.by_functionality.functional %}
-            <li class="collection-item">
-              {{ i.id }} - {{ i.description }}<br>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-      <div class="col s6">
-        <div class="col s12">
-          <h5>Non-Functional</h5>
-          <ul class="collection">
-            {% for i in data.by_functionality.non_functional %}
-            <li class="collection-item">
-              {{ i.id }} - {{ i.description }}<br>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-    </div>
-    {% if test == '0'%}
-      <div class="divider"></div>
-      {% endif %}
-    {% endif %}
-    {% if test == '0' or test == '4' %}
-    <div class="row">
-      <div class="col s12" style="padding: 0 3em;">
-        <h3>Keywords</h3>
-        <ul class="collection">
-          {% for i in data.by_keywords %}
-          <ul class="collection">
-            <h5>{{ i.keyword }}</h5>
-            {% for j in i.requirements %}
-            {{ j.id }} - {{ j.description }}<br>
-            {% endfor %}
-          </ul>
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-    {% endif %}
-  </div>
-
-  <div class="col s3">
-    <div class="row" id="setting">
-      <div class="col s12">
-        <div class="row">
-          <div class="col s6"><h5>Filter</h5></div>
-          <div class="col s6">
-            <h5 id="reset">
-              <i class="fas fa-redo" title="Reset Filters"></i>
-            </h5>
+              <li class="collection-item">
+                {{ i.id }} - {{ i.description }}
+              </li>
+              {% endfor %}
+            </ul>
           </div>
         </div>
-        <form method="POST" action="{% url 'index' %}" name="filterF">
-        {% csrf_token %}
-        <div class="hiding">
-          {{ form.title }}
-          {{ form.requirements }}
+      </div>
+      {% if test == '0'%}
+      <div class="divider"></div>
+      {% endif %}
+      {% endif %}
+      {% if test == '0' or test == '3' %}
+      <!-- group by Functional -->
+      
+      <div class="row " style="padding: 2em 0 2em 3em;">
+        <h3>Group by Functionality</h3>
+        <div class="col s6">
+          <div class="col s12">
+            <h5>Functional</h5>
+            <ul class="collection">
+              {% for i in data.by_functionality.functional %}
+              <li class="collection-item">
+                {{ i.id }} - {{ i.description }}<br>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
         </div>
-          <p class="options">
-            <label>
-            {% if test == '0'%}
-              <input class="with-gap" name="filter" type="radio" value="0" checked />
-            {% else %}
-              <input class="with-gap" name="filter" type="radio" value="0"/>
-            {% endif %}
-              <span>Show All options</span>
-            </label>
-          </p>
-          <p class="options">
-            <label>
-            {% if test == '1'%}
-              <input class="with-gap" name="filter" type="radio" value="1" checked />
-            {% else %}
-              <input class="with-gap" name="filter" type="radio" value="1"/>
-            {% endif %}
-              <span>Show All Requirements</span>
-            </label>
-          </p>
-          <p class="options">
-            <label>
-            {% if test == '2'%}
-              <input class="with-gap" name="filter" type="radio" value="2" checked />
-            {% else %}
-              <input class="with-gap" name="filter" type="radio" value="2"/>
-            {% endif %}
-              <span>Show Group by Priority</span>
-            </label>
-          </p>
-          <p class="options">
-            <label>
-            {% if test == '3'%}
-              <input class="with-gap" name="filter" type="radio" value="3" checked />
-            {% else %}
-              <input class="with-gap" name="filter" type="radio" value="3"/>
-            {% endif %}
-              <span>Show Group by Functionality</span>
-            </label>
-          </p>
-          <p class="options">
-            <label>
-            {% if test == '4'%}
-              <input class="with-gap" name="filter" type="radio" value="4" checked />
-            {% else %}
-              <input class="with-gap" name="filter" type="radio" value="4"/>
-            {% endif %}
-              <span>Show Group by Keywords</span>
-            </label>
-          </p>
-          <br>
-          <input class="btn indigo" type="submit" value="Filter"/>
-        </form>
+        <div class="col s6">
+          <div class="col s12">
+            <h5>Non-Functional</h5>
+            <ul class="collection">
+              {% for i in data.by_functionality.non_functional %}
+              <li class="collection-item">
+                {{ i.id }} - {{ i.description }}<br>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+      {% if test == '0'%}
+      <div class="divider"></div>
+      {% endif %}
+      {% endif %}
+      {% if test == '0' or test == '4' %}
+      <div class="row">
+        <div class="col s12" style="padding: 0 3em;">
+          <h3>Keywords</h3>
+          <ul class="collection">
+            {% for i in data.by_keywords %}
+            <li class="collection-item">
+              <h5>{{ i.keyword }}</h5>
+              {% for j in i.requirements %}
+              {{ j.id }} - {{ j.description }}<br>
+              {% endfor %}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    
+    <div class="col s3">
+      <div class="row" id="setting">
+        <div class="col s12">
+          <div class="row">
+            <div class="col s12"><h5>Filter</h5></div>
+          </div>
+          <form method="POST" action="{% url 'index' %}" name="filterF">
+            {% csrf_token %}
+            <div class="hiding">
+              {{ form.title }}
+              {{ form.requirements }}
+            </div>
+            <p class="options">
+              <label>
+                {% if test == '0'%}
+                <input class="with-gap" name="filter" type="radio" value="0" checked />
+                {% else %}
+                <input class="with-gap" name="filter" type="radio" value="0"/>
+                {% endif %}
+                <span>Show All options</span>
+              </label>
+            </p>
+            <p class="options">
+              <label>
+                {% if test == '1'%}
+                <input class="with-gap" name="filter" type="radio" value="1" checked />
+                {% else %}
+                <input class="with-gap" name="filter" type="radio" value="1"/>
+                {% endif %}
+                <span>Show All Requirements</span>
+              </label>
+            </p>
+            <p class="options">
+              <label>
+                {% if test == '2'%}
+                <input class="with-gap" name="filter" type="radio" value="2" checked />
+                {% else %}
+                <input class="with-gap" name="filter" type="radio" value="2"/>
+                {% endif %}
+                <span>Show Group by Priority</span>
+              </label>
+            </p>
+            <p class="options">
+              <label>
+                {% if test == '3'%}
+                <input class="with-gap" name="filter" type="radio" value="3" checked />
+                {% else %}
+                <input class="with-gap" name="filter" type="radio" value="3"/>
+                {% endif %}
+                <span>Show Group by Functionality</span>
+              </label>
+            </p>
+            <p class="options">
+              <label>
+                {% if test == '4'%}
+                <input class="with-gap" name="filter" type="radio" value="4" checked />
+                {% else %}
+                <input class="with-gap" name="filter" type="radio" value="4"/>
+                {% endif %}
+                <span>Show Group by Keywords</span>
+              </label>
+            </p>
+            <br>
+            <input class="btn indigo" type="submit" value="Filter"/>
+          </form>
+        </div>
       </div>
     </div>
+    
   </div>
+  {% endif %}
   
-</div>
-{% endif %}
-
 </div>
 
 <script>
