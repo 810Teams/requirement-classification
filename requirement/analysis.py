@@ -22,7 +22,7 @@ class RequirementData():
         self.title = title # Type: String
 
         if isinstance(requirements, str):
-            requirements = [i.strip() for i in requirements.split('\n')]
+            requirements = [i.strip() for i in requirements.split('\n') if i.strip() != '']
         for i in range(len(requirements)):
             requirements[i] = Requirement(i + 1, requirements[i].replace('\n', ''))
 

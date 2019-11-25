@@ -78,9 +78,9 @@ def index(request):
     create_tree(priority=2, show_result=True, remove_list=priority_filter, result_title='High')
     create_tree(priority=1, show_result=True, remove_list=priority_filter, result_title='Medium')
     create_tree(priority=0, show_result=True, remove_list=priority_filter, result_title='Low')
-    create_tree(is_functional=False, show_result=True, remove_list=functionality_filter, result_title='Function')
-    create_tree(is_functional=True, show_result=True, remove_list=functionality_filter, result_title='Non-functional')
+    # create_tree(is_functional=False, show_result=True, remove_list=functionality_filter, result_title='Function')
+    # create_tree(is_functional=True, show_result=True, remove_list=functionality_filter, result_title='Non-functional')
 
-    # create_sample_data(clear_all=True)
+    create_sample_data(clear_all=True)
 
     return render(request, template_name='requirement/index.html', context=context)
