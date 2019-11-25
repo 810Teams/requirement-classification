@@ -183,10 +183,10 @@
                 {% endif %}
 
                 <!-- functionality -->
-                {% if i.functionality %}
-                <div class="col s3"> Functionality | <b style="color: #00bfa5;"> {{ i.functionality }} </b></div>
+                {% if i.is_functional %}
+                <div class="col s3"> Functionality | <b style="color: #00bfa5;"> {{ i.is_functional }} </b></div>
                 {% else %}
-                <div class="col s3"> Functionality | <b style="color: #ff3d00;"> {{ i.functionality }} </b></div>
+                <div class="col s3"> Functionality | <b style="color: #ff3d00;"> {{ i.is_functional }} </b></div>
                 {% endif %}
                 
                 <!-- keywords -->
@@ -194,7 +194,7 @@
               </div>
               <!-- ID: {{ i.id }}
                 | Priority: {{ i.priority }}
-                | Functionality: {{ i.functionality }}
+                | Functionality: {{ i.is_functional }}
                 | Keywords:
                 {% for j in i.keywords %}
                 {{ j }}
