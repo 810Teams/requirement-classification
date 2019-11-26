@@ -337,12 +337,14 @@ def dive_tree_compare(node=TreeNode(None), item=(), level=0):
     if len(item) == 0:
         return 0
 
-    if item[level] in [i.data for i in node.children] and level + 1 < len(item):
-        return dive_tree_compare(
-            node=node.children[[i.data for i in node.children].index(item[level])],
-            item=item,
-            level=level + 1
-        ) + 1
+    if item[level] in [i.data for i in node.children]:
+        if level + 1 < len(item):
+            return dive_tree_compare(
+                node=node.children[[i.data for i in node.children].index(item[level])],
+                item=item,
+                level=level + 1
+            ) + 1
+        return 1
     return 0
 
 

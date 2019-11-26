@@ -72,13 +72,19 @@ TEMPLATES = [
 WSGI_APPLICATION = 'requirement_classification.wsgi.application'
 
 
+KEY = [[int(j) for j in i.replace('\n', '').split()] for i in open('KEY.txt')]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'HOST': '35.186.159.109',
         'PORT': '3306',
         'USER': 'root',
-        'PASSWORD': '810Teams',
+        'PASSWORD': ''.join([
+            chr(
+                KEY[0][i % len(KEY[0])] - KEY[1][:-1][i % (len(KEY[1]) - 1)] % KEY[1][-1]
+            ) for i in range(len(KEY[0]))
+        ]),
         'NAME': 'requirement',
     }
 }
