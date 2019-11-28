@@ -226,6 +226,9 @@ def get_data_group_by_keyword(data):
         'นะ',
         'อยากได้',
         'อื่น',
+        'ไร',
+        'หน่อย',
+        'สิ',
     ]
 
     # Step 1: Append all received data
