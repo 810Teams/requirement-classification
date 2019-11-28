@@ -224,6 +224,8 @@ def get_data_group_by_keyword(data):
 
     exceptions = [
         'นะ',
+        'อยากได้',
+        'อื่น',
     ]
 
     # Step 1: Append all received data
@@ -241,15 +243,17 @@ def get_data_group_by_keyword(data):
 
     # Step 3: Remove exceeded keywords
     minimum = 2
-    while len(counted_data) > 14:
+    while len(counted_data) > 9:
         for i in sorted(counted_data, key=lambda x: counted_data[x]):
             if counted_data[i] < minimum:
                 counted_data.pop(i)
         minimum += 1
 
+    # Step 4: Put all requirements into a dict
     for i in counted_data:
         dict_keywords[i[0]] = [j for j in data if i[0] in TOKENIZER.word_tokenize(j.description)]
 
+    # Step 5: Add requirements without keywords caught
     temp = list()
     for i in dict_keywords:
         for j in dict_keywords[i]:
