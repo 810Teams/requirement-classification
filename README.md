@@ -1,6 +1,8 @@
 # Requirement Classification
 Requirement Classification project of Requirement Engineering class, Faculty of Information Technology, King Mongkut's Institute of Technology Ladkrabang.
 
+![](readme/img/banner/repo-db-warning.png)
+
 ## Screenshots
 ![](readme/img/screenshot/screenshot-01.png)
 ![](readme/img/screenshot/screenshot-02.png)
